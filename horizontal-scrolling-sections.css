@@ -1,0 +1,54 @@
+/*
+ * Horizontal Scrolling Sections
+ * from Will-Myers.com
+*/
+.wm-hs-container {
+  --header-height: 0px; /* Default value, will be overridden by JS */
+  display: block;
+  position: relative;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  transform: translateX(0);
+  height: var(--horizontal-sliding-height);
+}
+.wm-hs-container .wm-hs-sticky-wrapper {
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  width: 100vw;
+  display: block;
+  overflow: hidden;
+}
+
+.wm-hs-container .wm-hs-scroll-wrapper {
+  height: 100vh;
+  width: calc(100vw * var(--section-count));
+  display: flex;
+  overflow: hidden;
+}
+
+.wm-hs-container .wm-hs-section {
+  flex: none;
+  width: 100vw;
+  height: 100vh;
+  padding-top: var(--header-fixed-top-offset);
+  box-sizing: border-box;
+}
+
+.wm-hs-container:not(:first-child) .wm-hs-section{
+  padding-top: var(--header-fixed-top-offset) !important;
+}
+
+/*If Sections "Fill Screen" is Toggled on*/
+.wm-hs-container .wm-hs-section.section-height--custom .content-wrapper{
+  align-self: start;
+  height: 100%;
+}
+
+.wm-hs-container .wm-hs-section.section-height--custom .fluid-engine{
+  height: 100%;
+}
+
+
+/**/
