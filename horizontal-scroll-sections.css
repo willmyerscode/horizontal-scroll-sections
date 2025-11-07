@@ -2,7 +2,7 @@
  * Horizontal Scrolling Sections
  * from Will-Myers.com
 */
-.wm-hs-container {
+.wm-hs-container.page-section {
   --header-height: 0px; /* Default value, will be overridden by JS */
   display: block;
   position: relative;
@@ -35,7 +35,9 @@
   padding-top: var(--header-fixed-top-offset);
   box-sizing: border-box;
 }
-
+.wm-hs-container:first-child{
+  padding-top: 0px !important;
+}
 .wm-hs-container:not(:first-child) .wm-hs-section{
   padding-top: var(--header-fixed-top-offset) !important;
 }
@@ -50,5 +52,7 @@
   height: 100%;
 }
 
-
-/**/
+/*Reverse*/
+.wm-hs-container[data-reverse="true"] .wm-hs-scroll-wrapper{
+  flex-direction: row-reverse;
+}
