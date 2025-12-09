@@ -111,6 +111,9 @@
       this.lastScrollTop = window.pageYOffset;
       this.prevWidth = window.innerWidth;
 
+      // Observers
+      this.resizeObserver = null;
+
       this.init();
     }
 
@@ -120,7 +123,6 @@
     init() {
       this.horizontalGroup.container = this.el;
       this.horizontalGroup.scrollWrapper = this.el.querySelector(".wm-hs-scroll-wrapper");
-      this.updateMeasurements();
       this.bindEvents();
 
       // Emit initialization event
@@ -138,6 +140,7 @@
       this.addResizeEventListener();
       this.addClickEventListener();
       this.handleHashNavigation();
+      this.addResizeObserver();
     }
 
     /**
@@ -309,10 +312,42 @@
     }
 
     /**
+     * Add ResizeObserver to watch for size changes
+     */
+    addResizeObserver() {
+      const { container, scrollWrapper } = this.horizontalGroup;
+      if (!container || !scrollWrapper) return;
+
+      this.resizeObserver = new ResizeObserver(() => {
+        this.updateMeasurements();
+        this.handleScroll();
+      });
+
+      this.resizeObserver.observe(scrollWrapper);
+      if (container.parentElement) {
+        this.resizeObserver.observe(container.parentElement);
+      }
+    }
+
+    /**
+     * Public method to manually trigger measurement refresh
+     */
+    refresh() {
+      this.updateMeasurements();
+      this.handleScroll();
+    }
+
+    /**
      * Destroy this instance and restore original structure
      */
     destroy() {
       const { container, scrollWrapper } = this.horizontalGroup;
+
+      if (this.resizeObserver) {
+        this.resizeObserver.disconnect();
+        this.resizeObserver = null;
+      }
+
       if (!container) return;
 
       // Get all the horizontal sections
@@ -556,6 +591,19 @@
      * Expose deconstruct function
      */
     deconstruct: deconstruct,
+
+    /**
+     * Refresh all instances - recalculates measurements
+     * Call this after other plugins modify the page layout
+     * @example window.wmHorizontalScrolling.refresh()
+     */
+    refresh: () => {
+      window[nameSpace].items.forEach(item => {
+        if (item.instance && typeof item.instance.refresh === "function") {
+          item.instance.refresh();
+        }
+      });
+    },
   };
 
   // Auto-initialize when DOM is ready
