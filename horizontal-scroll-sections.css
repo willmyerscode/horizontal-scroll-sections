@@ -41,6 +41,9 @@
 .wm-hs-container:not(:first-child) .wm-hs-section{
   padding-top: var(--header-fixed-top-offset) !important;
 }
+main .sections:first-child > .wm-hs-container:first-child .page-section:first-child {
+  padding-top: var(--header-fixed-top-offset);
+}
 
 /*If Sections "Fill Screen" is Toggled on*/
 .wm-hs-container .wm-hs-section.section-height--custom .content-wrapper{
