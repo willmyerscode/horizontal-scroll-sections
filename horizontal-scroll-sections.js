@@ -288,10 +288,7 @@
     setHeaderOffset() {
       const header = document.querySelector("#header");
       if (!header) return;
-
-      const position = getComputedStyle(header).position;
-      if (position !== "fixed" && position !== "sticky") return;
-
+      
       document.documentElement.style.setProperty("--header-fixed-top-offset", `${header.offsetHeight}px`);
     }
 
