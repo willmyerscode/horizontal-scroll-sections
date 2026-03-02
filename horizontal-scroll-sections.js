@@ -283,11 +283,26 @@
     }
 
     /**
+     * Detect the Squarespace header height and set --header-fixed-top-offset on the document root
+     */
+    setHeaderOffset() {
+      const header = document.querySelector("#header");
+      if (!header) return;
+
+      const position = getComputedStyle(header).position;
+      if (position !== "fixed" && position !== "sticky") return;
+
+      document.documentElement.style.setProperty("--header-fixed-top-offset", `${header.offsetHeight}px`);
+    }
+
+    /**
      * Calculate and update all scroll measurements
      */
     updateMeasurements() {
       const { container, scrollWrapper } = this.horizontalGroup;
       if (!container || !scrollWrapper) return;
+
+      this.setHeaderOffset();
 
       // Calculate how far we need to scroll horizontally
       this.horizontalGroup.distance = scrollWrapper.offsetWidth - window.innerWidth;
