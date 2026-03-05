@@ -76,6 +76,102 @@
       });
       return clone;
     }
+
+    /**
+     * Resolve the current Squarespace header mode from tweakJSON
+     * @returns {"non-fixed"|"fixed-basic"|"fixed-scrollback"}
+     */
+    static getHeaderMode() {
+      const tweakJSON = window.Static?.SQUARESPACE_CONTEXT?.tweakJSON || {};
+      const isFixedHeader = tweakJSON["tweak-fixed-header"] === true || tweakJSON["tweak-fixed-header"] === "true";
+      const fixedHeaderStyle = tweakJSON["tweak-fixed-header-style"];
+
+      if (!isFixedHeader) {
+        return "non-fixed";
+      }
+
+      return fixedHeaderStyle === "Scroll Back" ? "fixed-scrollback" : "fixed-basic";
+    }
+
+    /**
+     * Keep the resolved header mode available to CSS selectors
+     */
+    static syncHeaderMode() {
+      document.documentElement.dataset.wmHsHeaderMode = Utilities.getHeaderMode();
+    }
+
+    /**
+     * Measure the current header state and expose it as CSS variables
+     */
+    static syncHeaderMeasurements() {
+      Utilities.syncHeaderMode();
+
+      const root = document.documentElement;
+      const header = document.querySelector("#header");
+
+      if (!header) {
+        root.style.setProperty("--header-fixed-top-offset", "0px");
+        root.style.setProperty("--header-fixed-bottom", "0px");
+        root.style.setProperty("--header-fixed-top-height", "0px");
+        return;
+      }
+
+      const headerRect = header.getBoundingClientRect();
+      const headerHeight = header.offsetHeight;
+      const headerBottom = headerRect.bottom;
+      const visibleTopHeight = Math.max(0, Math.min(headerHeight, headerBottom));
+
+      root.style.setProperty("--header-fixed-top-offset", `${headerHeight}px`);
+      root.style.setProperty("--header-fixed-bottom", `${headerBottom}px`);
+      root.style.setProperty("--header-fixed-top-height", `${visibleTopHeight}px`);
+    }
+
+    /**
+     * Keep header CSS variables updated while scrolling
+     */
+    static startHeaderMeasurementSync() {
+      if (Utilities._headerMeasurementSyncStarted) return;
+      Utilities._headerMeasurementSyncStarted = true;
+
+      let frameRequested = false;
+      let scrollStopTimer = null;
+      let settleTimer = null;
+
+      const runMeasurement = () => {
+        frameRequested = false;
+        Utilities.syncHeaderMeasurements();
+      };
+
+      const requestMeasurement = () => {
+        if (frameRequested) return;
+        frameRequested = true;
+        window.requestAnimationFrame(runMeasurement);
+      };
+
+      const runSettledMeasurements = () => {
+        Utilities.syncHeaderMeasurements();
+        window.clearTimeout(settleTimer);
+        settleTimer = window.setTimeout(() => {
+          Utilities.syncHeaderMeasurements();
+        }, 120);
+      };
+
+      const handleScroll = () => {
+        requestMeasurement();
+
+        window.clearTimeout(scrollStopTimer);
+        scrollStopTimer = window.setTimeout(() => {
+          runSettledMeasurements();
+        }, 120);
+      };
+
+      window.addEventListener("scroll", handleScroll, { passive: true });
+      window.addEventListener("load", () => {
+        Utilities.syncHeaderMeasurements();
+      });
+
+      Utilities.syncHeaderMeasurements();
+    }
   }
 
   // ============================================================================
@@ -286,10 +382,7 @@
      * Detect the Squarespace header height and set --header-fixed-top-offset on the document root
      */
     setHeaderOffset() {
-      const header = document.querySelector("#header");
-      if (!header) return;
-      
-      document.documentElement.style.setProperty("--header-fixed-top-offset", `${header.offsetHeight}px`);
+      Utilities.syncHeaderMeasurements();
     }
 
     /**
@@ -581,6 +674,7 @@
      * Initialize the plugin
      */
     init: () => {
+      Utilities.startHeaderMeasurementSync();
       initPlugin();
     },
 
