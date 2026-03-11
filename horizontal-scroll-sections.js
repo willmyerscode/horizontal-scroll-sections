@@ -496,14 +496,10 @@
       return null;
     }
 
-    // Get the color theme from the initial section
-    const colorTheme = initialSection.dataset.sectionTheme;
-
     // Create the horizontal scroll container
     const horizontalContainer = document.createElement("section");
     horizontalContainer.classList.add("wm-hs-container", "page-section");
     if (id) horizontalContainer.id = id;
-    if (colorTheme) horizontalContainer.dataset.sectionTheme = colorTheme;
 
     // Set the section count CSS variable
     horizontalContainer.style.setProperty("--section-count", sectionCount);
