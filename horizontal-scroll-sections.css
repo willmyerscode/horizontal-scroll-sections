@@ -47,7 +47,8 @@ html[data-wm-hs-header-mode="non-fixed"] .wm-hs-container .page-section.wm-hs-se
   padding-top: 0px
 }
 
-html[data-wm-hs-header-mode="non-fixed"] main .sections:first-child > .wm-hs-container:first-child .page-section.wm-hs-section:first-child {
+html[data-wm-hs-header-mode="non-fixed"] main .sections:first-child > .wm-hs-container:first-child .page-section.wm-hs-section:first-child,
+html[data-wm-hs-header-mode="non-fixed"] main .page-regions:first-child > .region:first-child > .wm-hs-container:first-child .page-section.wm-hs-section:first-child {
   padding-top: var(--header-fixed-top-offset);
 }
 
