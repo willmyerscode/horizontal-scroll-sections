@@ -110,9 +110,9 @@
       const header = document.querySelector("#header");
 
       if (!header) {
-        root.style.setProperty("--header-fixed-top-offset", "0px");
-        root.style.setProperty("--header-fixed-bottom", "0px");
-        root.style.setProperty("--header-fixed-top-height", "0px");
+        root.style.setProperty("--wm-hs-header-fixed-top-offset", "0px");
+        root.style.setProperty("--wm-hs-header-fixed-bottom", "0px");
+        root.style.setProperty("--wm-hs-header-fixed-top-height", "0px");
         return;
       }
 
@@ -121,9 +121,9 @@
       const headerBottom = headerRect.bottom;
       const visibleTopHeight = Math.max(0, Math.min(headerHeight, headerBottom));
 
-      root.style.setProperty("--header-fixed-top-offset", `${headerHeight}px`);
-      root.style.setProperty("--header-fixed-bottom", `${headerBottom}px`);
-      root.style.setProperty("--header-fixed-top-height", `${visibleTopHeight}px`);
+      root.style.setProperty("--wm-hs-header-fixed-top-offset", `${headerHeight}px`);
+      root.style.setProperty("--wm-hs-header-fixed-bottom", `${headerBottom}px`);
+      root.style.setProperty("--wm-hs-header-fixed-top-height", `${visibleTopHeight}px`);
     }
 
     /**
@@ -379,7 +379,7 @@
     }
 
     /**
-     * Detect the Squarespace header height and set --header-fixed-top-offset on the document root
+     * Detect the Squarespace header height and set --wm-hs-header-fixed-top-offset on the document root
      */
     setHeaderOffset() {
       Utilities.syncHeaderMeasurements();
